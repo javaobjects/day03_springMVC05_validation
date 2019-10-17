@@ -37,6 +37,8 @@ public class Emp {
 	@Max(value = 99999,message = "{emp.salary}")
 	private double salary;
 	/**奖金*/
+	@Min(value = 1000,message = "{emp.salary}")
+	@Max(value = 99999,message = "{emp.salary}")
 	private double comm;
 	/**部门*/
 	private Dept dept;
