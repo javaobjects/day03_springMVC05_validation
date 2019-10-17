@@ -1,0 +1,11 @@
+数据回显：
+
+1. pojo类型:默认保存在request作用域中，作用域中key值默认为pojo类型首字母小写，即Emp的key为emp
+
+//model.addAttribute("emp", emp);
+
+
+
+2.简单类型：需要手动保存到作用域中
+
+model.addAttribute("id", id);

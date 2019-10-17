@@ -16,11 +16,14 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.tencent.group.Goup1;
+import com.tencent.group.Goup2;
 import com.tencent.pojo.Emp;
 import com.tencent.service.IEmpService;
 
@@ -183,6 +186,57 @@ public class EmpController {
 		return "success";
 	}
 	
+	
+	
+	/**
+	 * 
+	 * <p>Title: insertEmp</p>  
+	 * <p>
+	 *	Description: 
+	 * @Validated:表示pojo对象需要被校验
+	 * BindingResult:保存校验不通过的错误信息
+	 * 
+	 * 
+	 * @Validated与BindingResult通常一前一后结合使用，前者负责校验，后者负责取校验错误结果
+	 * </p> 
+	 * @param model
+	 * @param emp
+	 * @param bindingResult
+	 * @return
+	 */
+	@RequestMapping("/insertEmp")
+	public String insertEmp(Model model,@Validated(value = {Goup1.class,Goup2.class}) Emp emp,BindingResult bindingResult,Integer id) {
+		//判断是否有错误结果
+		if(bindingResult.hasErrors()) {
+			//获取错误结果
+			List<ObjectError> errorList = bindingResult.getAllErrors();
+			/*for (ObjectError error : errorList) {
+			System.err.println(error.getDefaultMessage());
+			}*/
+			
+			//将错误结果保存在request作用域
+			model.addAttribute("errorList",errorList);
+			
+			
+			/**
+			 * 数据回显：
+			 * 		1.pojo类型:默认保存在request作用域中，作用域中key值默认为pojo类型首字母小写，即Emp的key为emp
+			 * 
+			 * 		2.简单类型：需要手动保存到作用域中
+			 */
+			//model.addAttribute("emp",emp);
+			model.addAttribute("id",id);
+			
+			//跳转回新增界面，并显示错误信息
+			return "empInsert";
+		}
+		
+		System.out.println("新增用户的信息:" + emp);
+		
+		return "success";
+	}
+	
+	
 	/**
 	 * 
 	 * <p>Title: deleteEmps</p>  
@@ -242,24 +296,7 @@ public class EmpController {
 		return "success";
 	}
 	
-	@RequestMapping("/insertEmp")
-	public String insertEmp(Model model,@Valid Emp emp,BindingResult bindingResult) {
-		//判断是否有错误结果
-		if(bindingResult.hasErrors()) {
-			//获取错误结果
-			List<ObjectError> errorList = bindingResult.getAllErrors();
-			
-			//将错误结果保存在request作用域
-			model.addAttribute("errorList",errorList);
-			
-			//跳转回新增界面，并显示错误信息
-			return "empInsert";
-		}
-		
-		System.out.println("新增用户的信息:" + emp);
-		
-		return "success";
-	}
+
 	
 	
 	

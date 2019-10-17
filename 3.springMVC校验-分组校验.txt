@@ -1,0 +1,66 @@
+1.定义分组接口
+	//分组一
+	public interface Goup1 {
+	
+		//雇员编号
+		//雇员姓名
+		
+		//接口中不需要任何定义
+	}
+	//分组二
+	public interface Goup2 {
+	
+		//职位
+		//上级经理
+		//入职日期
+		//薪水
+		//奖金
+		
+		//接口中不需要任何定义
+	}
+	
+2.在Emp.java实体类中创建分组信息	
+	public class Emp {
+
+		/**雇员编号*/
+		@Min(value=1000,message="{emp.empno}",groups={Goup1.class})
+		@Max(value=9999,message="{emp.empno}",groups={Goup1.class})
+		private int empno;
+		
+		/**雇员姓名*/
+		@Pattern(regexp="[0-9a-zA-Z_]{6,10}",message="{emp.ename}",groups={Goup1.class})
+		private String ename;
+		
+		/**职位*/
+		@NotEmpty(message="{emp.job}",groups={Goup2.class})
+		private String job;
+		
+		/**上级经理*/
+		@Min(value=1000,message="{emp.mgr}",groups={Goup2.class})
+		@Max(value=9999,message="{emp.mgr}",groups={Goup2.class})
+		private int mgr;
+		
+		/**入职日期*/
+		@NotNull(message="{emp.hiredate}",groups={Goup2.class})
+		private Date hiredate;
+		
+		/**薪水*/
+		@Min(value=1000,message="{emp.salary}",groups={Goup2.class})
+		@Max(value=99999,message="{emp.salary}",groups={Goup2.class})
+		private double salary;
+		
+		/**奖金*/
+		@Min(value=1000,message="{emp.comm}",groups={Goup2.class})
+		@Max(value=99999,message="{emp.comm}",groups={Goup2.class})
+		private double comm;
+	}
+	
+3.在EmpController.java根据指定的分组进行校验
+  //根据第一组进行校验
+  public String insertEmp(Model model,@Validated(value={Goup1.class}) Emp emp,BindingResult bindingResult,Integer id){}
+  
+  //根据第二组进行校验
+  public String insertEmp(Model model,@Validated(value={Goup2.class}) Emp emp,BindingResult bindingResult,Integer id){}
+  
+  //根据第一组、第二组同时进行校验
+  public String insertEmp(Model model,@Validated(value={Goup1.class,Goup2.class}) Emp emp,BindingResult bindingResult,Integer id){}

@@ -10,38 +10,41 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.tencent.group.Goup1;
+import com.tencent.group.Goup2;
+
 /**
  * 映射Emp表的实体类
  */
 public class Emp {
 
 	/**雇员编号*/
-	@Min(value = 1000,message = "{emp.empno}")
-	@Max(value = 9999,message = "{emp.empno}")
+	@Min(value = 1000,message = "{emp.empno}",groups = {Goup1.class})
+	@Max(value = 9999,message = "{emp.empno}",groups = {Goup1.class})
 	private int empno;
 	/**雇员姓名*/
-	@Pattern(regexp = "[0-9a-zA-z_]{6,10}",message = "{emp.ename}")
+	@Pattern(regexp = "[0-9a-zA-z_]{6,10}",message = "{emp.ename}",groups = {Goup1.class})
 	private String ename;
 	/**职位*/
-	@NotEmpty(message = "{emp.job}")
+	@NotEmpty(message = "{emp.job}",groups = {Goup2.class})
 	private String job;
 	/**上级经理*/
-	@Min(value = 1000,message = "{emp.mgr}")
-	@Max(value = 9999,message = "{emp.mgr}")
+	@Min(value = 1000,message = "{emp.mgr}",groups = {Goup2.class})
+	@Max(value = 9999,message = "{emp.mgr}",groups = {Goup2.class})
 	private int mgr;
 	/**入职日期*/
-	@NotNull(message = "{emp.hiredate}")
+	@NotNull(message = "{emp.hiredate}",groups = {Goup2.class})
 	private Date hiredate;
 	/**薪水*/
-	@Min(value = 1000,message = "{emp.salary}")
-	@Max(value = 99999,message = "{emp.salary}")
+	@Min(value = 1000,message = "{emp.salary}",groups = {Goup2.class})
+	@Max(value = 99999,message = "{emp.salary}",groups = {Goup2.class})
 	private double salary;
 	/**奖金*/
-	@Min(value = 1000,message = "{emp.salary}")
-	@Max(value = 99999,message = "{emp.salary}")
+	@Min(value = 1000,message = "{emp.salary}",groups = {Goup2.class})
+	@Max(value = 99999,message = "{emp.salary}",groups = {Goup2.class})
 	private double comm;
 	/**部门*/
-	private Dept dept;
+	private Dept dept;//一对一，一个员工属于一个部门
 	/**
 	 * 	管理的下属员工信息 
 	 */

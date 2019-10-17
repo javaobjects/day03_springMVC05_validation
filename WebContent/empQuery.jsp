@@ -51,6 +51,7 @@
 		</table>
 		<br/><br/><br/>
 		<input type="submit" value="批量删除">
+		<input type="button" value="新增" onclick="window.location.href='${pageContext.request.contextPath}/empInsert.jsp'">
 	</form>
 </body>
 </html>
