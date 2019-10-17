@@ -1,2 +1,144 @@
-# day03_springMVC05_validation
-springMVC校验
+# springMVC校验
+
+#### 1. 导入校验jar文件
+
+![](WebContent/Images/1.png)
+
+```
+hibernate-validator-4.3.0.Final.jar
+jboss-logging-3.1.0.CR2.jar
+validation-api-1.0.0.GA.jar
+```
+#### 2. 在spring-mvc.xml中配置校验器
+	
+![](WebContent/Images/2.png)
+
+```xml
+<!-- 5.配置校验器 -->
+<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+	<!-- 校验器提供者 -->
+	<property name="providerClass" value="org.hibernate.validator.HibernateValidator"></property>
+	
+	<!-- 错误信息文件,如果不配置，默认读取src路径下的ValidationMessages.properties文件 -->
+	<property name="validationMessageSource" ref="messageSource"></property>
+</bean>
+
+<!-- 5.1 读取外部错误信息配置文件 -->
+<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<!-- 外部文件路径 -->
+		<property name="basenames">
+			<list>
+				<value>classpath:CustomerValidationMessages</value>
+			</list>
+		</property>
+		
+		<!-- 指定文件编码格式 -->
+		<property name="defaultEncoding" value="utf-8"></property>
+		
+		<!-- 设置缓存时间（秒为单位） :缓存1分钟-->
+		<property name="cacheSeconds" value="60"></property>
+</bean>
+```
+
+#### 3. 在src路径下配置错误信息文件CustomerValidationMessages.properties
+
+![](WebContent/Images/3.png)
+
+```properties
+emp.empno = \u96C7\u5458\u7F16\u53F7\u957F\u5EA6\u5FC5\u987B\u4E3A4
+emp.ename = \u96C7\u5458\u540D\u79F0\u5FC5\u987B\u7531\u4E0B\u5212\u7EBF\u3001\u6570\u5B57\u3001\u5B57\u6BCD\u7EC4\u6210\uFF0C\u957F\u5EA6\u5FC5\u987B\u57286-10\u4F4D\u4E4B\u95F4
+emp.salary = \u85AA\u6C34\u5FC5\u987B\u5927\u4E8E1000\uFF0C\u5C0F\u4E8E99999
+```
+
+#### 4. 在spring-mvc.xml中校验器注入到处理器适配器中
+		
+```xml
+<!-- 1.开启注解方式的处理器映射器、处理器适配器 -->
+<mvc:annotation-driven validator="validator"/>
+```
+
+#### 5. 在Emp.java添加校验规则
+
+![](WebContent/Images/4.png)
+
+```Java
+public class Emp {
+
+	/**雇员编号*/
+	@Min(value=1000,message="{emp.empno}")
+	@Max(value=9999,message="{emp.empno}")
+	private int empno;
+	
+	/**雇员姓名*/
+	@Pattern(regexp="[0-9a-zA-Z_]{6,10}",message="{emp.ename}")
+	private String ename;
+	
+	/**职位*/
+	@NotEmpty(message="{emp.job}")
+	private String job;
+	
+	/**上级经理*/
+	@Min(value=1000,message="{emp.mgr}")
+	@Max(value=9999,message="{emp.mgr}")
+	private int mgr;
+	
+	/**入职日期*/
+	@NotNull(message="{emp.hiredate}")
+	private Date hiredate;
+	
+	/**薪水*/
+	@Min(value=1000,message="{emp.salary}")
+	@Max(value=99999,message="{emp.salary}")
+	private double salary;
+	
+	/**奖金*/
+	@Min(value=1000,message="{emp.comm}")
+	@Max(value=99999,message="{emp.comm}")
+	private double comm;
+}
+```
+
+#### 6. 在EmpController.java中捕获错误信息
+
+![](WebContent/Images/5.png)
+
+```Java
+@RequestMapping("/insertEmp")
+public String insertEmp(Model model,@Valid Emp emp,BindingResult bindingResult)
+{
+	//判断是否有错误结果
+	if(bindingResult.hasErrors())
+	{
+		//获取错误结果
+		List<ObjectError> errorList = bindingResult.getAllErrors();
+		/*for (ObjectError error : errorList) {
+			System.err.println(error.getDefaultMessage());
+		}*/
+		
+		//将错误结果保存在request作用域
+		model.addAttribute("errorList", errorList);
+		
+		//跳转回新增界面，并显示错误信息
+		return "empInsert";
+		
+	}
+	
+	System.out.println("新增用户的信息：" + emp);
+	
+	return "success";
+}
+```	
+
+#### 7. 在empInsert.jsp中显示错误信息
+
+![](WebContent/Images/6.png)
+
+```Jsp
+<h5>
+	<c:forEach items="${errorList}" var="error">
+		<font color="red" size="-1">${error.defaultMessage}</font><br/>
+	</c:forEach>
+</h5>
+```
+
+
