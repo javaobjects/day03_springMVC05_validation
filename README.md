@@ -140,5 +140,7 @@ public String insertEmp(Model model,@Valid Emp emp,BindingResult bindingResult)
 	</c:forEach>
 </h5>
 ```
+#### 7. 效果如下
 
+![](WebContent/Images/7.png)
 
